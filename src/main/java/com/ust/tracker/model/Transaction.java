@@ -19,11 +19,11 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
-    private String transaction_type;
+    private String transactionType;
     private double amount;
     private String description;
     @CreationTimestamp
     @Column(updatable = false)
-    private Date created_date;
+    private Date createdDate;
 
 }

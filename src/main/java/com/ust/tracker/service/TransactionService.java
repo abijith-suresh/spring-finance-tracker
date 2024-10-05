@@ -17,7 +17,7 @@ public class TransactionService {
     public Transaction addTransaction(TransactionDto transactionDto){
         Transaction transaction = new Transaction();
         transaction.setName(transactionDto.getName());
-        transaction.setTransaction_type(transactionDto.getTransaction_type());
+        transaction.setTransactionType(transactionDto.getTransaction_type());
         transaction.setDescription(transactionDto.getDescription());
         transaction.setAmount(transactionDto.getAmount());
         return transactionRepo.save(transaction);
