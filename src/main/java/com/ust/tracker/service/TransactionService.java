@@ -7,6 +7,9 @@ import com.ust.tracker.repo.TransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -27,5 +30,16 @@ public class TransactionService {
         Transaction transaction = transactionRepo.findById(id)
                 .orElseThrow(()->new TransactionNotFoundException("Transaction not found for the given id: " + id));
         return transaction;
+    }
+
+    public Map<String, Double> getTotalsForMonth(int month, int year) {
+        Double totalCredits = transactionRepo.findTotalCreditsByMonthAndYear(month, year);
+        Double totalDebits = transactionRepo.findTotalDebitsByMonthAndYear(month, year);
+
+        Map<String, Double> totals = new HashMap<>();
+        totals.put("totalCredits", totalCredits != null ? totalCredits : 0.0);
+        totals.put("totalDebits", totalDebits != null ? totalDebits : 0.0);
+
+        return totals;
     }
 }
