@@ -1,5 +1,6 @@
 package com.ust.tracker.service;
 
+import com.ust.tracker.dto.DailyAccountSummaryDto;
 import com.ust.tracker.dto.MonthlyTotalsDto;
 import com.ust.tracker.dto.PaymentMethodCountDto;
 import com.ust.tracker.dto.TransactionDto;
@@ -49,5 +50,17 @@ public class TransactionService {
 
     public List<PaymentMethodCountDto> getPaymentMethodCountsByDate(Date date) {
         return transactionRepo.findPaymentMethodCountsByDate(date);
+    }
+
+    public DailyAccountSummaryDto getDailyAccountSummary(Date date) {
+        Double dailyCredits = transactionRepo.findDailyCreditsByDate(date);
+        Double dailyDebits = transactionRepo.findDailyDebitsByDate(date);
+        Double currentBalance = transactionRepo.findTotalBalance();
+
+        return new DailyAccountSummaryDto(
+                currentBalance != null ? currentBalance : 0.0,
+                dailyCredits != null ? dailyCredits : 0.0,
+                dailyDebits != null ? dailyDebits : 0.0
+        );
     }
 }

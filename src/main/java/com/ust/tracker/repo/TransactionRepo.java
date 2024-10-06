@@ -24,4 +24,15 @@ public interface TransactionRepo extends JpaRepository<Transaction, UUID> {
             "ORDER BY COUNT(t) DESC")
     List<PaymentMethodCountDto> findPaymentMethodCountsByDate(@Param("date") Date date);
 
+    @Query("SELECT COALESCE(SUM(CASE WHEN t.transactionType = 'Credit' THEN t.amount ELSE 0 END), 0) - " +
+            "COALESCE(SUM(CASE WHEN t.transactionType = 'Debit' THEN t.amount ELSE 0 END), 0) " +
+            "FROM Transaction t")
+    Double findTotalBalance();
+
+    @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.transactionType = 'Credit' AND DATE(t.transactionDate) = :date")
+    Double findDailyCreditsByDate(@Param("date") Date date);
+
+    @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.transactionType = 'Debit' AND DATE(t.transactionDate) = :date")
+    Double findDailyDebitsByDate(@Param("date") Date date);
+
 }

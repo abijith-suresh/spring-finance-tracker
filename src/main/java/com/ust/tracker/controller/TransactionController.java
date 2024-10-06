@@ -1,5 +1,6 @@
 package com.ust.tracker.controller;
 
+import com.ust.tracker.dto.DailyAccountSummaryDto;
 import com.ust.tracker.dto.MonthlyTotalsDto;
 import com.ust.tracker.dto.PaymentMethodCountDto;
 import com.ust.tracker.dto.TransactionDto;
@@ -50,6 +51,17 @@ public class TransactionController {
 
         List<PaymentMethodCountDto> counts = transactionService.getPaymentMethodCountsByDate(sqlDate);
         return ResponseEntity.ok(counts);
+    }
+
+    @GetMapping("/summary")
+    public ResponseEntity<DailyAccountSummaryDto> getDailyAccountSummary(
+            @RequestParam(value = "date")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+
+        Date sqlDate = java.sql.Date.valueOf(date);
+        DailyAccountSummaryDto summary = transactionService.getDailyAccountSummary(sqlDate);
+
+        return ResponseEntity.ok(summary);
     }
 }
 
