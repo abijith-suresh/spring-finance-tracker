@@ -22,8 +22,9 @@ public class Transaction {
     private String transactionType;
     private double amount;
     private String description;
-    @CreationTimestamp
+    private String paymentMethod;
+
     @Column(updatable = false)
-    private Date createdDate;
+    private Date transactionDate;
 
 }

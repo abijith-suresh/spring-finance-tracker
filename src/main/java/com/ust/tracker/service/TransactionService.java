@@ -1,5 +1,7 @@
 package com.ust.tracker.service;
 
+import com.ust.tracker.dto.MonthlyTotalsDto;
+import com.ust.tracker.dto.PaymentMethodCountDto;
 import com.ust.tracker.dto.TransactionDto;
 import com.ust.tracker.exception.TransactionNotFoundException;
 import com.ust.tracker.model.Transaction;
@@ -7,10 +9,7 @@ import com.ust.tracker.repo.TransactionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class TransactionService {
@@ -20,26 +19,35 @@ public class TransactionService {
     public Transaction addTransaction(TransactionDto transactionDto){
         Transaction transaction = new Transaction();
         transaction.setName(transactionDto.getName());
-        transaction.setTransactionType(transactionDto.getTransaction_type());
+        transaction.setTransactionType(transactionDto.getTransactionType());
         transaction.setDescription(transactionDto.getDescription());
         transaction.setAmount(transactionDto.getAmount());
+        transaction.setPaymentMethod((transactionDto.getPaymentMethod()));
+
+        if (transactionDto.getTransactionDate() != null) {
+            transaction.setTransactionDate(transactionDto.getTransactionDate());
+        } else {
+            transaction.setTransactionDate(new Date());
+        }
         return transactionRepo.save(transaction);
     }
 
     public Transaction getTransaction(UUID id) throws TransactionNotFoundException {
-        Transaction transaction = transactionRepo.findById(id)
+        return transactionRepo.findById(id)
                 .orElseThrow(()->new TransactionNotFoundException("Transaction not found for the given id: " + id));
-        return transaction;
     }
 
-    public Map<String, Double> getTotalsForMonth(int month, int year) {
+    public MonthlyTotalsDto getTotalsForMonth(int month, int year) {
         Double totalCredits = transactionRepo.findTotalCreditsByMonthAndYear(month, year);
         Double totalDebits = transactionRepo.findTotalDebitsByMonthAndYear(month, year);
 
-        Map<String, Double> totals = new HashMap<>();
-        totals.put("totalCredits", totalCredits != null ? totalCredits : 0.0);
-        totals.put("totalDebits", totalDebits != null ? totalDebits : 0.0);
+        return new MonthlyTotalsDto(
+                totalCredits != null ? totalCredits : 0.0,
+                totalDebits != null ? totalDebits : 0.0
+        );
+    }
 
-        return totals;
+    public List<PaymentMethodCountDto> getPaymentMethodCountsByDate(Date date) {
+        return transactionRepo.findPaymentMethodCountsByDate(date);
     }
 }
