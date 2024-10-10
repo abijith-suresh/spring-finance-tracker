@@ -27,4 +27,8 @@ public class Transaction {
     @Column(updatable = false)
     private Date transactionDate;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserInfo userInfo;
+
 }

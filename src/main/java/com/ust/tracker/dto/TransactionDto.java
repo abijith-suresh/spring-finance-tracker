@@ -1,5 +1,6 @@
 package com.ust.tracker.dto;
 
+import com.ust.tracker.model.UserInfo;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

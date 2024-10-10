@@ -5,6 +5,7 @@ import com.ust.tracker.dto.MonthlyTotalsDto;
 import com.ust.tracker.dto.PaymentMethodCountDto;
 import com.ust.tracker.dto.TransactionDto;
 import com.ust.tracker.exception.TransactionNotFoundException;
+import com.ust.tracker.exception.UserNotFoundException;
 import com.ust.tracker.model.Transaction;
 import com.ust.tracker.service.TransactionService;
 import jakarta.validation.Valid;
@@ -26,14 +27,23 @@ public class TransactionController {
     private TransactionService transactionService;
 
     @PostMapping("/add")
-    public ResponseEntity<Transaction> addTransaction(@RequestBody @Valid TransactionDto transactionDto){
-        Transaction createdTransaction = transactionService.addTransaction(transactionDto);
-        return new ResponseEntity<>(createdTransaction, HttpStatus.CREATED);
+    public ResponseEntity<Transaction> addTransaction(@RequestBody @Valid TransactionDto transactionDto, @RequestBody String username){
+        try {
+            Transaction createdTransaction = transactionService.addTransaction(transactionDto, username);
+            return new ResponseEntity<>(createdTransaction, HttpStatus.CREATED);
+        } catch (UserNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @GetMapping("/get/{id}")
-    public ResponseEntity<Transaction> getTransaction(@PathVariable UUID id) throws TransactionNotFoundException {
-        return ResponseEntity.ok(transactionService.getTransaction(id));
+    public ResponseEntity<Transaction> getTransaction(@PathVariable UUID id){
+        try {
+            Transaction transaction = transactionService.getTransaction(id);
+            return ResponseEntity.ok(transaction);
+        } catch (TransactionNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @GetMapping("/month/{month}/{year}")
